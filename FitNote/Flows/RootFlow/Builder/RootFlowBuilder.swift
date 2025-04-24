@@ -15,11 +15,15 @@ final class RootFlowBuilder {
         noteNavigationController.tabBarItem.title = "Note".localized()
         noteNavigationController.tabBarItem.image = UIImage(systemName: "note")
         
-        let resultsNavigationController = UINavigationController(rootViewController: NoteBuilder.build())
+        let resultsNavigationController = UINavigationController(rootViewController: ResultsBuilder.build())
         resultsNavigationController.tabBarItem.title = "Results".localized()
-        resultsNavigationController.tabBarItem.image = UIImage(systemName: "newspaper")
+        resultsNavigationController.tabBarItem.image = UIImage(systemName: "list.bullet.clipboard")
         
-        tabBarController.viewControllers = [noteNavigationController, resultsNavigationController]
+        let exercisesNavigationController = UINavigationController(rootViewController: ExercisesBuilder.build())
+        exercisesNavigationController.tabBarItem.title = "Exercises".localized()
+        exercisesNavigationController.tabBarItem.image = UIImage(systemName: "figure.strengthtraining.traditional")
+        
+        tabBarController.viewControllers = [noteNavigationController, resultsNavigationController, exercisesNavigationController]
         tabBarController.modalPresentationStyle = .fullScreen
         
         return tabBarController

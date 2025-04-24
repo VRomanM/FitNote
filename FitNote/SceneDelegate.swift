@@ -19,21 +19,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowsScene = (scene as? UIWindowScene) else { return }
         
         self.window = UIWindow(windowScene: windowsScene)
-        
-        let tabBarController = UITabBarController()
-        let noteNavigationController = UINavigationController(rootViewController: NoteBuilder.build())
-        noteNavigationController.tabBarItem.title = "Note".localized()
-        noteNavigationController.tabBarItem.image = UIImage(systemName: "note")
-        
-        let resultsNavigationController = UINavigationController(rootViewController: NoteBuilder.build())
-        resultsNavigationController.tabBarItem.title = "Results".localized()
-        resultsNavigationController.tabBarItem.image = UIImage(systemName: "newspaper")
-        
-        tabBarController.viewControllers = [noteNavigationController, resultsNavigationController]
-        tabBarController.modalPresentationStyle = .fullScreen
-        
         self.window?.makeKeyAndVisible()
-        self.window?.rootViewController = tabBarController
+        self.window?.rootViewController = RootFlowBuilder().build()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

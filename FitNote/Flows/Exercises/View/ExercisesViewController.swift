@@ -12,7 +12,14 @@ class ExercisesViewController: UIViewController {
     //MARK: - View
     
     private var tableView = UITableView(frame: .zero, style: .grouped)
+    private let searchController = UISearchController(searchResultsController: nil)
     
+    //MARK: - Private properties
+    
+    private var searchBarIsEmpty: Bool {
+        guard let text = searchController.searchBar.text else { return false }
+        return text.isEmpty
+    }
     
     //MARK: - Properties
     
@@ -29,8 +36,11 @@ class ExercisesViewController: UIViewController {
         // Настройка вью
         view.backgroundColor = .backgroundPrimary
         
-        // Настройка навигэйшн бар
-        setupNavigationBar()
+        // Настройка контроллера поиска
+        setupSearchController()
+        
+        // Настройка навигейшн бар
+        navigationItem.title = "Exercises".localized()
         
         // Настройка таблицы
         tableView.dataSource = self
@@ -48,10 +58,19 @@ class ExercisesViewController: UIViewController {
         ])
     }
     
-    private func setupNavigationBar() {
-        //navigationItem.title = "Exercises".localized()
-        guard let navigationController = navigationController else { return }
-        navigationItem.titleView = ExercisesTitleView(title: "Exercises".localized())
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search".localized()
+        searchController.searchBar.tintColor = .textSecondary
+        searchController.searchBar.searchBarStyle = .minimal
+        searchController.searchBar.layer.borderWidth = 1
+        searchController.searchBar.layer.borderColor = UIColor.clear.cgColor
+        searchController.searchBar.setValue("Cancel".localized(), forKey: "cancelButtonText")
+        navigationItem.hidesSearchBarWhenScrolling = false
+        definesPresentationContext = true
+        
+        navigationItem.searchController = searchController
     }
 }
 
@@ -72,5 +91,11 @@ extension ExercisesViewController: UITableViewDataSource {
         }
         cell.configure(title: "Развдение рук с гантелями в наклоне стоя и еще что-то там где-то там куда -то там наклонившись, прищемив себе что - то", image: UIImage(systemName: "note")!)
         return cell
+    }
+}
+
+extension ExercisesViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        
     }
 }

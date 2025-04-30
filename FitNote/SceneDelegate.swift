@@ -18,6 +18,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowsScene = (scene as? UIWindowScene) else { return }
         
+        // Настройки для всех навигационных баров в приложении
+        UINavigationBar.appearance().titleTextAttributes = [
+            .foregroundColor: UIColor.textSecondary,
+            .font: UIFont.subheadline ?? UIFont.systemFont(ofSize: 30)
+        ]
+
+        if #available(iOS 11.0, *) {
+            UINavigationBar.appearance().largeTitleTextAttributes = [
+                .foregroundColor: UIColor.textSecondary,
+                .font: UIFont.subheadline ?? UIFont.systemFont(ofSize: 30)
+            ]
+        }
+        
         self.window = UIWindow(windowScene: windowsScene)
         self.window?.makeKeyAndVisible()
         self.window?.rootViewController = RootFlowBuilder().build()

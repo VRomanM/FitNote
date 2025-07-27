@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct Note: Identifiable {
+struct Delete_Note: Identifiable {
     let id: UUID
     var date: Date
-    var sessions: [Session]
+    var sessions: [DELETE_NoteRow]
     var comment: String?
 }

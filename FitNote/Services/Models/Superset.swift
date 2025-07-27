@@ -9,7 +9,6 @@ import Foundation
 
 struct Superset: Identifiable {
     let id: UUID
-    var exercises: [SessionExercise]
-    var order: Int // если нужно несколько суперсетов в сессии
-    var comment: String?
+    var name: String
+    var recoveryTime: TimeInterval?
 }

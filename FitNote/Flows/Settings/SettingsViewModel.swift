@@ -9,15 +9,15 @@ import Foundation
 
 class SettingsViewModel: ObservableObject {
     @Published var user: User?
-    @Published var notes: [Note] = []
+    @Published var sessions: [Session] = []
 
     init() {
         // Здесь можно добавить загрузку пользователя, если появится
-        self.notes = MocData.allNotes
+        self.sessions = MocData.sessions
     }
 
     func resetData() {
         // Здесь будет логика сброса (пока просто перезагрузка моков)
-        self.notes = MocData.allNotes
+        self.sessions = MocData.sessions
     }
 }

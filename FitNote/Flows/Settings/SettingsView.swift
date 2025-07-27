@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
-    @State private var showNoteDetail: Note?
+    @State private var showSessionDetail: Session?
     @State private var showResetAlert = false
     @State private var showAbout = false
 
@@ -33,9 +33,9 @@ struct SettingsView: View {
                 }
 
                 Section(header: Text("Заметки")) {
-                    ForEach(viewModel.notes, id: \.id) { note in
-                        NoteRow(note: note) {
-                            showNoteDetail = note
+                    ForEach(viewModel.sessions, id: \.id) { session in
+                        SessionRow(session: session) {
+                            showSessionDetail = session
                         }
                     }
                 }
@@ -55,10 +55,10 @@ struct SettingsView: View {
             }
             .navigationTitle("Настройки")
             .listStyle(InsetGroupedListStyle())
-            .alert(item: $showNoteDetail) { note in
+            .alert(item: $showSessionDetail) { session in
                 Alert(
                     title: Text("Заметка"),
-                    message: Text(note.comment ?? "Без комментария"),
+                    message: Text(session.comment ?? "Без комментария"),
                     dismissButton: .default(Text("OK"))
                 )
             }
@@ -82,19 +82,23 @@ struct SettingsView: View {
     }
 }
 
-private struct NoteRow: View {
-    let note: Note
+private struct SessionRow: View {
+    let session: Session
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading) {
-                Text(note.comment ?? "Без комментария")
+                Text(session.comment ?? "Без комментария")
                     .font(.body)
-                Text(note.date, style: .date)
+                Text(session.date, style: .date)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
         }
     }
+}
+
+#Preview {
+    SettingsView()
 }

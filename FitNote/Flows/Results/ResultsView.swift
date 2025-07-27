@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct ResultsView: View {
-    private var notes: [Note] {
-        MocData.allNotes.sorted { $0.date > $1.date }
+    private var sessions: [Session] {
+        MocData.sessions //{ $0.date > $1.date }
     }
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(notes) { note in
-                    NoteSectionView(note: note)
+                ForEach(sessions) { session in
+                    NoteSectionView(session: session)
                 }
             }
             .navigationTitle("Результаты")
@@ -25,14 +25,14 @@ struct ResultsView: View {
 }
 
 struct NoteSectionView: View {
-    let note: Note
+    let session: Session
 
     var body: some View {
-        Section(header: Text(note.date, style: .date)) {
-            ForEach(note.sessions) { session in
+        Section(header: Text(session.date, style: .date)) {
+//            ForEach(session.sets) { set in
                 SessionRowView(session: session)
-            }
-            if let comment = note.comment, !comment.isEmpty {
+//            }
+            if let comment = session.comment, !comment.isEmpty {
                 Text("💬 \(comment)")
                     .font(.footnote)
                     .foregroundColor(.gray)
@@ -56,10 +56,10 @@ struct SessionRowView: View {
             }
             .font(.caption)
             .foregroundColor(.secondary)
-            if !session.exercises.isEmpty {
+            if !session.sets.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(session.exercises) { se in
+                        ForEach(session.sets) { se in
                             Text(se.exercise.name)
                                 .font(.caption2)
                                 .padding(6)
@@ -71,4 +71,8 @@ struct SessionRowView: View {
         }
         .padding(.vertical, 4)
     }
+}
+
+#Preview {
+    ResultsView()
 }

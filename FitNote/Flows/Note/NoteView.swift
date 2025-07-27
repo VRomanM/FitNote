@@ -10,7 +10,7 @@ import SwiftUI
 struct NoteView: View {
     @StateObject private var viewModel = NoteViewModel()
     @State private var showAddSession = false
-
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -33,14 +33,11 @@ struct NoteView: View {
             }
         }
         .sheet(isPresented: $showAddSession) {
-        AddSessionView { newSession in
-            viewModel.addSession(newSession)
-            showAddSession = false
+//            AddSessionView { newSession in
+//                viewModel.addSession(newSession)
+//                showAddSession = false
+//            }
         }
-}
-//        .tabItem {
-//            Label("Дневник", systemImage: "house.fill")
-//        }
     }
 }
 

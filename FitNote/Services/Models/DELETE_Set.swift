@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ExerciseSet: Identifiable {
+struct DeLete_ExerciseSet: Identifiable {
     let id: UUID
     let exercise: Exercise
     var comment: String?

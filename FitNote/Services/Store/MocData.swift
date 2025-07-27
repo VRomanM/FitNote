@@ -8,92 +8,73 @@
 import Foundation
 
 struct MocData {
-    static var allNotes: [Note] {
+    static var sessions: [Session] {
         [
-            noteBenchPressAndRunning,
-            noteCyclingAndWalking,
-            noteOtherCombinations,
-            noteWithSupersets
+            sessionBenchPressAndRunning,
+            sessionCyclingAndWalking,
+            sessionOtherCombinations,
+            sessionWithSupersets
         ]
     }
 
     // 1. Bench Press + Running (weight+iterations, distance+time)
-    static var noteBenchPressAndRunning: Note {
+    static var sessionBenchPressAndRunning: Session {
         let exercise1 = Exercise(
             id: UUID(),
             name: "Bench Press",
-            measurementTypes: [.weight, .iterations],
-            measurementParams: [
+            measurements: [
                 .weight(unit: .kg, isGravitron: false, doubleInStats: false),
                 .iterations
             ]
         )
+        
         let exercise2 = Exercise(
             id: UUID(),
             name: "Running",
-            measurementTypes: [.distance, .time],
-            measurementParams: [
+            measurements: [
                 .distance(unit: .km, activity: .running, syncWithWatch: true),
                 .time(unit: .timer, midSignal: false)
             ]
         )
         let set1 = ExerciseSet(
             id: UUID(),
-            values: [.weight: 80, .iterations: 10],
+            exercise: exercise1,
+            comment: "hard workout",
+            results: [
+                .paired(.weight, 80, .iterations, 10),
+                .paired(.weight, 82, .iterations, 12),
+                .paired(.weight, 84, .iterations, 14)
+            ]
         )
         let set2 = ExerciseSet(
             id: UUID(),
-            values: [.weight: 85, .iterations: 8],
-        )
-        let set3 = ExerciseSet(
-            id: UUID(),
-            values: [.distance: 5, .time: 1500],
-        )
-        let sessionExercise1 = SessionExercise(
-            id: UUID(),
-            exercise: exercise1,
-            sets: [set1, set2]
-        )
-        let sessionExercise2 = SessionExercise(
-            id: UUID(),
             exercise: exercise2,
-            sets: [set3]
+            comment: "fast run",
+            results: [
+                .paired(.distance, 5, .time, 1500),
+                .paired(.distance, 5, .time, 1500)
+            ]
         )
-        let session1 = Session(
+
+        return Session(
             id: UUID(),
             name: "Morning Workout",
             date: Date(),
-            avgHeartRate: 120,
-            duration: 3600,
-            calories: 500,
-            exercises: [sessionExercise1],
-            supersets: [Superset]()
-        )
-        let session2 = Session(
-            id: UUID(),
-            name: "Evening Cardio",
-            date: Date().addingTimeInterval(-86400),
-            avgHeartRate: 135,
-            duration: 1800,
+            avgHeartRate: 110,
+            duration: TimeInterval(100),
             calories: 300,
-            exercises: [sessionExercise2],
-            supersets: [Superset]()
-        )
-        return Note(
-            id: UUID(),
-            date: Date(),
-            sessions: [session1, session2],
-            comment: "Bench + бег. Утро и вечер."
+            comment: "Жим лёжа, бег",
+            sets: [set1, set2]
         )
     }
 
     // 2. Cycling (distance+time+activity), Walking (distance+time), Gravitron Pull-up (weight+iterations+gravitron)
-    static var noteCyclingAndWalking: Note {
+    static var sessionCyclingAndWalking: Session {
         let cycling = Exercise(
             id: UUID(),
             name: "Cycling",
-            measurementTypes: [.distance, .time],
-            measurementParams: [
+//            measurementTypes: [.distance, .time],
+            measurements: [
                 .distance(unit: .mile, activity: .cycling, syncWithWatch: false),
                 .time(unit: .stopwatch, midSignal: true)
             ]
@@ -101,8 +82,8 @@ struct MocData {
         let walking = Exercise(
             id: UUID(),
             name: "Walking",
-            measurementTypes: [.distance, .time],
-            measurementParams: [
+//            measurementTypes: [.distance, .time],
+            measurements: [
                 .distance(unit: .km, activity: .walking, syncWithWatch: false),
                 .time(unit: .manual, midSignal: false)
             ]
@@ -110,213 +91,218 @@ struct MocData {
         let gravitron = Exercise(
             id: UUID(),
             name: "Gravitron Pull-up",
-            measurementTypes: [.weight, .iterations],
-            measurementParams: [
+//            measurementTypes: [.weight, .iterations],
+            measurements: [
                 .weight(unit: .kg, isGravitron: true, doubleInStats: true),
                 .iterations
             ]
         )
-        let cyclingSet = ExerciseSet(
-            id: UUID(),
-            values: [.distance: 12.5, .time: 3200],
-        )
-        let walkingSet = ExerciseSet(
-            id: UUID(),
-            values: [.distance: 3.2, .time: 1800]
-        )
-        let gravitronSet = ExerciseSet(
-            id: UUID(),
-            values: [.weight: 40, .iterations: 12]
-        )
-        let sessionExercise1 = SessionExercise(
+        let set1 = ExerciseSet(
             id: UUID(),
             exercise: cycling,
-            sets: [cyclingSet]
+            comment: "hard cycling",
+            results: [
+                .paired(.distance, 12.5, .time, 3200),
+                .paired(.distance, 12.5, .time, 3200),
+                .paired(.distance, 12.5, .time, 3200)
+            ]
         )
-        let sessionExercise2 = SessionExercise(
+        
+        let set2 = ExerciseSet(
             id: UUID(),
             exercise: walking,
-            sets: [walkingSet]
+            comment: "light wlaking",
+            results: [
+                .paired(.distance, 3.2, .time, 1800),
+                .paired(.distance, 3.2, .time, 2000),
+                .paired(.distance, 3.2, .time, 2100)
+            ]
         )
-        let sessionExercise3 = SessionExercise(
+        
+        let set3 = ExerciseSet(
             id: UUID(),
             exercise: gravitron,
-            sets: [gravitronSet]
+            comment: "hard gravitron",
+            results: [
+                .paired(.weight, 40, .iterations, 12),
+                .paired(.weight, 45, .iterations, 12),
+                .paired(.weight, 50, .iterations, 12)
+            ]
         )
-        let session = Session(
+        
+        return Session(
             id: UUID(),
             name: "Outdoor Activities",
-            date: Date().addingTimeInterval(-2 * 86400),
-            avgHeartRate: 110,
-            duration: 5400,
+            date: Date(),
+            avgHeartRate: 135,
+            duration: TimeInterval(100),
             calories: 700,
-            exercises: [sessionExercise1, sessionExercise2, sessionExercise3],
-            supersets: [Superset]()
-        )
-        return Note(
-            id: UUID(),
-            date: Date().addingTimeInterval(-2 * 86400),
-            sessions: [session],
-            comment: "Велосипед, прогулка, гравитрон."
+            comment: "Велосипед, прогулка, гравитрон.",
+            sets: [set1, set2, set3]
         )
     }
 
     // 3. Все MeasurementType по одному: только вес, только время, только дистанция, только повторения
-    static var noteOtherCombinations: Note {
+    static var sessionOtherCombinations: Session {
         let weightOnly = Exercise(
             id: UUID(),
             name: "Dumbbell Curl",
-            measurementTypes: [.weight],
-            measurementParams: [
-                .weight(unit: .lb, isGravitron: false, doubleInStats: false)
+//            measurementTypes: [.weight],
+            measurements: [
+                .weight(unit: .lb, isGravitron: false, doubleInStats: true)
             ]
         )
         let timeOnly = Exercise(
             id: UUID(),
             name: "Plank",
-            measurementTypes: [.time],
-            measurementParams: [
+//            measurementTypes: [.time],
+            measurements: [
                 .time(unit: .stopwatch, midSignal: false)
             ]
         )
         let distanceOnly = Exercise(
             id: UUID(),
             name: "Rowing",
-            measurementTypes: [.distance],
-            measurementParams: [
+//            measurementTypes: [.distance],
+            measurements: [
                 .distance(unit: .km, activity: .other, syncWithWatch: false)
             ]
         )
         let repsOnly = Exercise(
             id: UUID(),
             name: "Push-ups",
-            measurementTypes: [.iterations],
-            measurementParams: [
+//            measurementTypes: [.iterations],
+            measurements: [
                 .iterations
             ]
         )
-        let setWeight = ExerciseSet(
+        let set1 = ExerciseSet(
             id: UUID(),
-            values: [.weight: 22.5]
+            exercise: weightOnly,
+            comment: "hard Dumbbell Curl",
+            results: [
+                .single(.weight, 12.5),
+                .single(.weight, 14),
+                .single(.weight, 15.5),
+            ]
         )
-        let setTime = ExerciseSet(
+        
+        let set2 = ExerciseSet(
             id: UUID(),
-            values: [.time: 90]
+            exercise: timeOnly,
+            comment: "hard Plank",
+            results: [
+                .single(.time, 1800),
+                .single(.time, 2000),
+                .single(.time, 2100)
+            ]
         )
-        let setDistance = ExerciseSet(
+        
+        let set3 = ExerciseSet(
             id: UUID(),
-            values: [.distance: 1.2]
+            exercise: distanceOnly,
+            comment: "hard Rowing",
+            results: [
+                .single(.distance, 10),
+                .single(.distance, 12),
+                .single(.distance, 14)
+            ]
         )
-        let setReps = ExerciseSet(
+        let set4 = ExerciseSet(
             id: UUID(),
-            values: [.iterations: 30]
+            exercise: repsOnly,
+            comment: "hard Push-ups",
+            results: [
+                .single(.iterations, 100),
+                .single(.iterations, 120),
+                .single(.iterations, 140)
+            ]
         )
-        let session = Session(
+        
+        return Session(
             id: UUID(),
             name: "Single Type Session",
             date: Date().addingTimeInterval(-3 * 86400),
-            avgHeartRate: 100,
-            duration: 1800,
-            calories: 200,
-            exercises: [
-                SessionExercise(id: UUID(), exercise: weightOnly, sets: [setWeight]),
-                SessionExercise(id: UUID(), exercise: timeOnly, sets: [setTime]),
-                SessionExercise(id: UUID(), exercise: distanceOnly, sets: [setDistance]),
-                SessionExercise(id: UUID(), exercise: repsOnly, sets: [setReps])
-            ],
-            supersets: [Superset]()
-        )
-        return Note(
-            id: UUID(),
-            date: Date().addingTimeInterval(-3 * 86400),
-            sessions: [session],
-            comment: "Каждое упражнение — свой тип измерения."
+            avgHeartRate: 110,
+            duration: TimeInterval(100),
+            calories: 900,
+            comment: "Каждое упражнение — свой тип измерения.",
+            sets: [set1, set2, set3, set4]
         )
     }
     
     // 4. Пример с суперсетами
-    static var noteWithSupersets: Note {
+    static var sessionWithSupersets: Session {
         // Обычные упражнения
         let squat = Exercise(
             id: UUID(),
             name: "Squat",
-            measurementTypes: [.weight, .iterations],
-            measurementParams: [
+//            measurementTypes: [.weight, .iterations],
+            measurements: [
                 .weight(unit: .kg, isGravitron: false, doubleInStats: false),
                 .iterations
             ]
         )
-        let squatSet = ExerciseSet(
-            id: UUID(),
-            values: [.weight: 100, .iterations: 8]
-        )
-        let squatSessionExercise = SessionExercise(
+        
+        let set1 = ExerciseSet(
             id: UUID(),
             exercise: squat,
-            sets: [squatSet]
+            comment: "Hard Squat",
+            results: [
+                .paired(.weight, 100, .iterations, 8),
+                .paired(.weight, 100, .iterations, 8),
+                .paired(.weight, 100, .iterations, 8),
+                .paired(.weight, 100, .iterations, 10)
+            ]
         )
         
-        // Суперсет: подтягивания + отжимания
+        let superset = Superset(id: UUID(), name: "Суперсет: подтягивания + отжимания", recoveryTime: TimeInterval(100))
+        
         let pullup = Exercise(
             id: UUID(),
             name: "Pull-up",
-            measurementTypes: [.iterations],
-            measurementParams: [
+//            measurementTypes: [.iterations],
+            measurements: [
                 .iterations
             ]
         )
         let pushup = Exercise(
             id: UUID(),
             name: "Push-up",
-            measurementTypes: [.iterations],
-            measurementParams: [
+//            measurementTypes: [.iterations],
+            measurements: [
                 .iterations
             ]
         )
-        let pullupSet = ExerciseSet(
-            id: UUID(),
-            values: [.iterations: 12]
-        )
-        let pushupSet = ExerciseSet(
-            id: UUID(),
-            values: [.iterations: 20]
-        )
-        let pullupSessionExercise = SessionExercise(
+        
+        let set2 = ExerciseSet(
             id: UUID(),
             exercise: pullup,
-            sets: [pullupSet]
+            comment: "fast Pull-ups",
+            results: [
+                .single(.iterations, 12)
+            ],
+            superset: superset
         )
-        let pushupSessionExercise = SessionExercise(
+        let set3 = ExerciseSet(
             id: UUID(),
             exercise: pushup,
-            sets: [pushupSet]
+            comment: "fast Push-ups",
+            results: [
+                .single(.iterations, 20)
+            ],
+            superset: superset
         )
         
-        // Суперсет как группа
-        let superset1 = Superset(
+        return Session(
             id: UUID(),
-            exercises: [pullupSessionExercise, pushupSessionExercise],
-            order: 1,
-            comment: "Суперсет: подтягивания + отжимания без отдыха"
-        )
-        
-        // Сессия с обычным упражнением и суперсетом
-        let session = Session(
-            id: UUID(),
-            name: "Superset Session",
-            date: Date().addingTimeInterval(-4 * 86400),
-            avgHeartRate: 125,
-            duration: 2700,
-            calories: 400,
-            exercises: [squatSessionExercise], // одиночные
-            supersets: [superset1]             // суперсеты
-        )
-        
-        return Note(
-            id: UUID(),
-            date: Date().addingTimeInterval(-4 * 86400),
-            sessions: [session],
-            comment: "Тренировка с суперсетом: подтягивания и отжимания подряд."
+            name: "Single Type Session",
+            date: Date().addingTimeInterval(-3 * 86400),
+            avgHeartRate: 110,
+            duration: TimeInterval(100),
+            calories: 900,
+            comment: "Сессия с обычным упражнением и суперсетом.",
+            sets: [set1, set2, set3]
         )
     }
 }

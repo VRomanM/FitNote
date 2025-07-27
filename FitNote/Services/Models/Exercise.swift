@@ -10,6 +10,6 @@ import Foundation
 struct Exercise: Identifiable {
     let id: UUID
     var name: String
-    var measurementTypes: [MeasurementType] // max 2
-    var measurementParams: [MeasurementParam] // порядок соответствует measurementTypes
+    var measurements: [Measurement] // max 2
+    //    var measurementTypes: [MeasurementType] // max 2
 }

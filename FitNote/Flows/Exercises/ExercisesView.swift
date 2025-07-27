@@ -13,9 +13,9 @@ struct ExercisesView: View {
     
     // Собираем все уникальные упражнения из всех заметок
     private var allExercises: [Exercise] {
-        let notes = MocData.allNotes
-        let sessions = notes.flatMap { $0.sessions }
-        let sessionExercises = sessions.flatMap { $0.exercises }
+//        let notes = MocData.sessions
+        let sessions = MocData.sessions
+        let sessionExercises = sessions.flatMap { $0.sets }
         let exercises = sessionExercises.map { $0.exercise }
         // Уникальные по id
         return Array(Set(exercises)).sorted { $0.name < $1.name }
@@ -32,16 +32,16 @@ struct ExercisesView: View {
                     Label("Добавить упражнение", systemImage: "plus")
                 }
                 // Список упражнений с возможностью редактирования
-                ForEach(allExercises) { exercise in
+                ForEach(allExercises) { ex in
                     Button(action: {
-                        editingExercise = exercise
+                        editingExercise = ex
                         showEditExercise = true
                     }) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(exercise.name)
+                            Text(ex.name)
                                 .font(.headline)
                             HStack(spacing: 8) {
-                                ForEach(exercise.measurementTypes, id: \.self) { type in
+                                ForEach(ex.measurements, id: \.self) { type in
                                     Text(type.displayName)
                                         .font(.caption2)
                                         .padding(4)
@@ -54,18 +54,18 @@ struct ExercisesView: View {
                 }
             }
             // Sheet:
-            .sheet(isPresented: $showEditExercise) {
-                EditExerciseView(
-                    viewModel: EditExerciseViewModel(exercise: editingExercise)
-                ) { newOrEditedExercise in
-                    // Добавить или обновить в массиве/хранилище
-                }
-            }
+//            .sheet(isPresented: $showEditExercise) {
+//                EditExerciseView(
+//                    viewModel: EditExerciseViewModel(exercise: editingExercise)
+//                ) { newOrEditedExercise in
+//                    // Добавить или обновить в массиве/хранилище
+//                }
+//            }
         }
     }
 }
 
-// Для уникальности в Set
+// Для уникальности в ExerciseSet
 extension Exercise: Hashable {
     public static func == (lhs: Exercise, rhs: Exercise) -> Bool {
         lhs.id == rhs.id
@@ -85,4 +85,8 @@ extension MeasurementType {
         case .time: return "Время"
         }
     }
+}
+
+#Preview {
+    ExercisesView()
 }

@@ -7,34 +7,113 @@
 
 import SwiftUI
 
-class EditExerciseViewModel: ObservableObject {
-    @Published var name: String
-//    @Published var selectedTypes: ExerciseSet<Measurement>
-    @Published var params: String // строка для ручного ввода параметров, если нужно
-    @Published var isNew: Bool
-    @Published var measurement: [Measurement]
+final class EditExerciseViewModel: ObservableObject {
     
-    var exercise: Exercise?
-
-    init(exercise: Exercise? = nil) {
-        self.exercise = exercise
-        self.name = exercise?.name ?? ""
-//        self.selectedTypes = ExerciseSet(exercise?.measurements ?? [])
-        self.measurement = exercise?.measurements ?? []
-        self.params = (exercise?.measurements.map { $0.displayName }.joined(separator: ", ") ?? "")
-        self.isNew = exercise == nil
+    //MARK: - Published Properties
+    
+    @Published var exercise: Exercise
+    @Published var selectedMeasurementsOrder: [MeasurementType] = []
+    
+    // Weight settings
+    @Published var weightUnit: WeightUnit = .kg
+    @Published var isGravitron: Bool = false
+    @Published var doubleInStats: Bool = false
+    
+    // Time settings
+    @Published var timeUnit: TimeUnit = .manual
+    @Published var midSignal: Bool = false
+    
+    // Distance settings
+    @Published var distanceUnit: DistanceUnit = .km
+    @Published var activityType: ActivityType = .running
+    @Published var syncWithWatch: Bool = false
+    
+    //MARK: - Properties
+    
+    var selectedMeasurements: Set<MeasurementType> {
+        Set(selectedMeasurementsOrder)
     }
-
-//    var isValid: Bool {
-//        !name.trimmingCharacters(in: .whitespaces).isEmpty && !selectedTypes.isEmpty
-//    }
-
-//    func buildExercise() -> Exercise {
-//        Exercise(
-//            id: exercise?.id ?? UUID(),
-//            name: name,
-//            measurementTypes: Array(selectedTypes),
-//            measurementParams: measurementParams
-//        )
-//    }
+    
+    var isValid: Bool {
+        !exercise.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
+    let isNewExercise: Bool
+    
+    //MARK: - Private properties
+    
+    private var measurements: [Measurement] {
+        var result: [Measurement] = []
+        
+        for measurementType in selectedMeasurements {
+            switch measurementType {
+            case .weight:
+                result.append(.weight(unit: weightUnit, isGravitron: isGravitron, doubleInStats: doubleInStats))
+            case .time:
+                result.append(.time(unit: timeUnit, midSignal: midSignal))
+            case .distance:
+                result.append(.distance(unit: distanceUnit, activity: activityType, syncWithWatch: syncWithWatch))
+            case .iterations:
+                result.append(.iterations)
+            }
+        }
+        
+        return result
+    }
+        
+    //MARK: - Constructions
+    
+    init(exercise: Exercise? = nil) {
+        guard let exercise else {
+            self.exercise = Exercise()
+            self.isNewExercise = true
+            return
+        }
+        self.isNewExercise = false
+        self.exercise = exercise
+        loadMeasurements(exercise.measurements)
+    }
+    
+    //MARK: - Private function
+    
+    private func loadMeasurements(_ measurements: [Measurement]) {
+        selectedMeasurementsOrder.removeAll()
+        
+        for measurement in measurements {
+            selectedMeasurementsOrder.append(measurement.type)
+            
+            switch measurement {
+            case .weight(let unit, let isGravitron, let doubleInStats):
+                weightUnit = unit
+                self.isGravitron = isGravitron
+                self.doubleInStats = doubleInStats
+            case .time(let unit, let midSignal):
+                timeUnit = unit
+                self.midSignal = midSignal
+            case .distance(let unit, let activity, let syncWithWatch):
+                distanceUnit = unit
+                activityType = activity
+                self.syncWithWatch = syncWithWatch
+            case .iterations:
+                break
+            }
+        }
+    }
+    
+    //MARK: - Function
+    
+    func saveExercise() {
+        
+    }
+    
+    func toggleMeasurement(_ type: MeasurementType) {
+        if selectedMeasurements.contains(type) {
+            selectedMeasurementsOrder.removeAll { $0 == type }
+        } else {
+            if selectedMeasurementsOrder.count == 2 {
+                selectedMeasurementsOrder.removeFirst()
+            }
+            selectedMeasurementsOrder.append(type)
+        }
+    }
 }

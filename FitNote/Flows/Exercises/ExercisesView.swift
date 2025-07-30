@@ -8,84 +8,80 @@
 import SwiftUI
 
 struct ExercisesView: View {
-    @State private var showEditExercise = false
-    @State private var editingExercise: Exercise? = nil
     
-    // Собираем все уникальные упражнения из всех заметок
-    private var allExercises: [Exercise] {
-//        let notes = MocData.sessions
-        let sessions = MocData.sessions
-        let sessionExercises = sessions.flatMap { $0.sets }
-        let exercises = sessionExercises.map { $0.exercise }
-        // Уникальные по id
-        return Array(Set(exercises)).sorted { $0.name < $1.name }
+    enum ExerciseRoute: Hashable {
+        case detail(exercise: Exercise?)
     }
     
+    @StateObject private var viewModel = ExercisesViewModel()
+    
     var body: some View {
-        NavigationView {
-            List {
-                // Кнопка добавить
-                Button(action: {
-                    editingExercise = nil
-                    showEditExercise = true
-                }) {
-                    Label("Добавить упражнение", systemImage: "plus")
-                }
-                // Список упражнений с возможностью редактирования
-                ForEach(allExercises) { ex in
-                    Button(action: {
-                        editingExercise = ex
-                        showEditExercise = true
-                    }) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(ex.name)
-                                .font(.headline)
-                            HStack(spacing: 8) {
-                                ForEach(ex.measurements, id: \.self) { type in
-                                    Text(type.displayName)
-                                        .font(.caption2)
-                                        .padding(4)
-                                        .background(Capsule().fill(Color.accentColor.opacity(0.15)))
-                                }
+        NavigationStack(path: $viewModel.navigationPath) {
+            Group {
+                if viewModel.isLoading {
+                    ProgressView("Loading exercises...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let errorMessage = viewModel.errorMessage {
+                    VStack {
+                        Text("Error")
+                            .font(.headline)
+                            .foregroundColor(.red)
+                        Text(errorMessage)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                        Button("Repeat") {
+                            Task {
+                                await viewModel.refreshExercises()
                             }
                         }
-                        .padding(.vertical, 4)
+                        .buttonStyle(.bordered)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    List {
+                        // Список упражнений с возможностью редактирования
+                        ForEach(viewModel.exercises) { exercise in
+                            Button(action: {
+                                viewModel.navigationPath.append(ExerciseRoute.detail(exercise: exercise))
+                            }) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(exercise.name)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                    HStack(spacing: 8) {
+                                        ForEach(exercise.measurements, id: \.self) { measurement in
+                                            Text(measurement.type.localizedValue)
+                                                .font(.caption2)
+                                                .padding(4)
+                                                .background(Capsule().fill(Color.accentColor.opacity(0.15)))
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 4)
+                            
+                        }
+                    }
+                    .navigationDestination(for: ExerciseRoute.self) { route in
+                        switch route {
+                        case .detail(let exercise):
+                            EditExerciseView(viewModel: EditExerciseViewModel(exercise: exercise))
+                        }
+                    }
+                    .refreshable {
+                        await viewModel.refreshExercises()
                     }
                 }
             }
-            // Sheet:
-//            .sheet(isPresented: $showEditExercise) {
-//                EditExerciseView(
-//                    viewModel: EditExerciseViewModel(exercise: editingExercise)
-//                ) { newOrEditedExercise in
-//                    // Добавить или обновить в массиве/хранилище
-//                }
-//            }
+            .navigationTitle("Exercises")
+            FNButton(text: "Add") {
+                viewModel.navigationPath.append(ExerciseRoute.detail(exercise: nil))
+            }
         }
     }
 }
 
-// Для уникальности в ExerciseSet
-extension Exercise: Hashable {
-    public static func == (lhs: Exercise, rhs: Exercise) -> Bool {
-        lhs.id == rhs.id
-    }
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
-// Для отображения measurementTypes
-extension MeasurementType {
-    var displayName: String {
-        switch self {
-        case .weight: return "Вес"
-        case .iterations: return "Повторения"
-        case .distance: return "Дистанция"
-        case .time: return "Время"
-        }
-    }
-}
 
 #Preview {
     ExercisesView()

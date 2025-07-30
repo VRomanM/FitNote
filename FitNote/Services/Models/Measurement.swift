@@ -7,11 +7,14 @@
 
 import Foundation
 
-enum MeasurementType: String, CaseIterable, Codable {
-    case weight = "weight"
-    case time = "time"
-    case distance = "distance"
-    case iterations = "iterations"
+enum MeasurementType: String, CaseIterable, Identifiable, Codable {
+    var id: String { rawValue }
+    var localizedValue: String { rawValue.localized() }
+    
+    case weight = "Weight"
+    case time = "Time"
+    case distance = "Distance"
+    case iterations = "Iterations"
 }
 
 enum Measurement: Hashable {
@@ -28,32 +31,28 @@ enum Measurement: Hashable {
         case .iterations: return .iterations
         }
     }
-    
-    var displayName: String {
-        switch self {
-        case .weight(let unit, let isGravitron, let doubleInStats):
-            return "\(unit.rawValue)\(isGravitron ? " gravitron" : "")\(doubleInStats ? " doubleInStats" : "")"
-        case .time(let unit, let midSignal):
-            return "\(unit)\(midSignal ? ", mid signal" : "")"
-        case .distance(let unit, let activity, let syncWithWatch):
-            return "\(unit.rawValue), \(activity.rawValue)\(syncWithWatch ? " sync with AppleWatch" : "")"
-        case .iterations: return "iterations"
-        }
-    }
 }
 
-enum WeightUnit: String, CaseIterable {
+enum WeightUnit: String, CaseIterable, Identifiable {
+    var id: String { rawValue }
+    var localizedValue: String { rawValue.localized() }
     case kg, lb
 }
 
-enum TimeUnit: String, CaseIterable {
+enum TimeUnit: String, CaseIterable, Identifiable {
+    var id: String { rawValue }
+    var localizedValue: String { rawValue.localized() }
     case manual, timer, stopwatch
 }
 
-enum DistanceUnit: String, CaseIterable {
+enum DistanceUnit: String, CaseIterable, Identifiable {
+    var id: String { rawValue }
+    var localizedValue: String { rawValue.localized() }
     case km, mile
 }
 
-enum ActivityType: String, CaseIterable {
+enum ActivityType: String, CaseIterable, Identifiable {
+    var id: String { rawValue }
+    var localizedValue: String { rawValue.localized() }
     case running, walking, cycling, other
 }

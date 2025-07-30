@@ -12,6 +12,7 @@ struct Activity: Identifiable {
     let title: String
     let date: Date
     let result: String
+    
     static func mockList() -> [Activity] {
         [
             Activity(title: "Грудь и трицепс", date: .now.addingTimeInterval(-3600), result: "Успешно"),

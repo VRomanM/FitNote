@@ -5,3 +5,59 @@
   Created by Роман Вертячих on 23.07.2025.
   
 */
+
+"Add" = "Добавить";
+
+"Cancel" = "Отмена";
+"cycling" = "велосипед";
+
+"Distance" = "Дистанция";
+"Distance settings" = "Настройки дистанции";
+"Double in stats" = "Удваивать в статитике";
+
+"Edit" = "Редактирование";
+"Enter exercise name" = "Введите название упражнения";
+"Error" = "Ошибка";
+"Error loading exercises: %@" = "Ошибка загрузки упраженений: %@";
+"Exercises" = "Упражнения";
+
+"Fixing" = "Фиксация";
+
+"General properties" = "Общие свойства";
+"Gravitron" = "Гравитрон";
+
+"Iterations" = "Повторения";
+
+"kg" = "кг";
+"km" = "км";
+
+"lb" = "фунт";
+"Loading exercises..." = "Загрузка упражнения...";
+
+"manual" = "вручную";
+"Mesurements" = "Измерения";
+"Mid signal" = "Сигнал на середине";
+"mile" = "миля";
+
+"New" = "Создание";
+
+"other" = "другое";
+
+"Save" = "Сохранить";
+"stopwatch" = "секундомер";
+"Sync with Apple Watch" = "Синхронизировать с Apple Watch";
+
+"running" = "бег";
+"Repeat" = "Повторить";
+
+"Time" = "Время";
+"Time settings" = "Настройки времени";
+"timer" = "таймер";
+"Type of activity" = "Вид активности";
+
+"UOM" = "Ед. изм";
+
+"walking" = "ходьба";
+"Weight" = "Вес";
+"Weight settings" = "Настройки веса";
+

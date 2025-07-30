@@ -9,14 +9,15 @@ import SwiftUI
 
 struct ExercisesView: View {
     
-    enum ExerciseRoute: Hashable {
+    private enum ExerciseRoute: Hashable {
         case detail(exercise: Exercise?)
     }
     
+    @State private var navigationPath = NavigationPath()
     @StateObject private var viewModel = ExercisesViewModel()
     
     var body: some View {
-        NavigationStack(path: $viewModel.navigationPath) {
+        NavigationStack(path: $navigationPath) {
             Group {
                 if viewModel.isLoading {
                     ProgressView("Loading exercises...")
@@ -43,7 +44,7 @@ struct ExercisesView: View {
                         // Список упражнений с возможностью редактирования
                         ForEach(viewModel.exercises) { exercise in
                             Button(action: {
-                                viewModel.navigationPath.append(ExerciseRoute.detail(exercise: exercise))
+                                navigationPath.append(ExerciseRoute.detail(exercise: exercise))
                             }) {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(exercise.name)
@@ -66,7 +67,7 @@ struct ExercisesView: View {
                     .navigationDestination(for: ExerciseRoute.self) { route in
                         switch route {
                         case .detail(let exercise):
-                            EditExerciseView(viewModel: EditExerciseViewModel(exercise: exercise))
+                            ExerciseView(viewModel: ExerciseViewModel(exercise: exercise))
                         }
                     }
                     .refreshable {
@@ -76,7 +77,7 @@ struct ExercisesView: View {
             }
             .navigationTitle("Exercises")
             FNButton(text: "Add") {
-                viewModel.navigationPath.append(ExerciseRoute.detail(exercise: nil))
+                navigationPath.append(ExerciseRoute.detail(exercise: nil))
             }
         }
     }

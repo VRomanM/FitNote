@@ -8,22 +8,45 @@
 import SwiftUI
 
 struct NoteView: View {
+    
+    private enum NoteRoute: Hashable {
+        case session(session: Session?)
+    }
+    
+    @State private var navigationPath = NavigationPath()
     @StateObject private var viewModel = NoteViewModel()
-    @State private var showAddSession = false
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             ScrollView {
                 VStack(spacing: 20) {
                     GreetingHeader(user: viewModel.user)
+                    
                     if let nextSession = viewModel.nextSession {
-                        NextSessionCard(session: nextSession, onStart: viewModel.startSession)
+                        NextSessionCard(session: nextSession) {
+                            navigationPath.append(NoteRoute.session(session: nextSession))
+                        }
                     }
                     ProgressSection(progress: viewModel.progress)
-                    QuickActionsSection(showAddSession: $showAddSession)
-                    RecentActivitySection(activities: viewModel.recentActivities)
+                    QuickActionsSection() {
+                        navigationPath.append(NoteRoute.session(session: nil))
+                    }
+                    RecentActivitySection(
+                        activities: viewModel.recentActivities,
+                        onSelect: { activity in
+                            if let session = viewModel.sessions.first(where: { $0.name == activity.title && Calendar.current.isDate($0.date, inSameDayAs: activity.date) }) {
+                                navigationPath.append(NoteRoute.session(session: session))
+                            }
+                        }
+                    )
                 }
                 .padding()
+            }
+            .navigationDestination(for: NoteRoute.self) { route in
+                switch route {
+                case .session(let session):
+                    SessionView(viewModel: SessionViewModel(session: session))
+                }
             }
             .navigationTitle("Дневник")
             .toolbar {
@@ -31,12 +54,6 @@ struct NoteView: View {
                     ProfileButton(user: viewModel.user)
                 }
             }
-        }
-        .sheet(isPresented: $showAddSession) {
-//            AddSessionView { newSession in
-//                viewModel.addSession(newSession)
-//                showAddSession = false
-//            }
         }
     }
 }
@@ -110,13 +127,11 @@ struct ProgressSection: View {
 }
 
 struct QuickActionsSection: View {
-    @Binding var showAddSession: Bool
+    var action: () -> Void
     
     var body: some View {
         HStack(spacing: 16) {
-            QuickActionButton(title: "Добавить", icon: "plus.circle.fill") {
-                showAddSession = true
-            }
+            QuickActionButton(title: "Добавить", icon: "plus.circle.fill") { action() }
             QuickActionButton(title: "Шаблоны", icon: "doc.on.doc.fill")
             QuickActionButton(title: "Статистика", icon: "chart.bar.fill")
         }
@@ -147,26 +162,30 @@ struct QuickActionButton: View {
 
 struct RecentActivitySection: View {
     let activities: [Activity]
+    var onSelect: ((Activity) -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading) {
             Text("Последние тренировки")
                 .font(.headline)
             ForEach(activities.prefix(3)) { activity in
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(activity.title)
-                            .font(.subheadline)
-                        Text(activity.date, style: .time)
+                Button(action: { onSelect?(activity) }) {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(activity.title)
+                                .font(.subheadline)
+                            Text(activity.date, style: .time)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Text(activity.result)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.accentColor)
                     }
-                    Spacer()
-                    Text(activity.result)
-                        .font(.caption)
-                        .foregroundColor(.accentColor)
+                    .padding(.vertical, 4)
                 }
-                .padding(.vertical, 4)
+//                .buttonStyle(.plain)
             }
         }
         .padding()

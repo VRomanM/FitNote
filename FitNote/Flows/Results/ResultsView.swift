@@ -32,12 +32,12 @@ struct NoteSectionView: View {
 //            ForEach(session.sets) { set in
                 SessionRowView(session: session)
 //            }
-            if let comment = session.comment, !comment.isEmpty {
-                Text("💬 \(comment)")
+//            if let comment = session.comment, !comment.isEmpty {
+                Text("💬 \(session.comment)")
                     .font(.footnote)
                     .foregroundColor(.gray)
                     .padding(.top, 2)
-            }
+//            }
         }
     }
 }

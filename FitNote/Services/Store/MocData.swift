@@ -17,23 +17,13 @@ struct MocData {
         ]
     }
 
-    // 1. Bench Press + Running (weight+iterations, distance+time)
-    static var sessionBenchPressAndRunning: Session {
+    static var exerciseSet: ExerciseSet {
         let exercise1 = Exercise(
             id: UUID(),
             name: "Bench Press",
             measurements: [
                 .weight(unit: .kg, isGravitron: false, doubleInStats: false),
                 .iterations
-            ]
-        )
-        
-        let exercise2 = Exercise(
-            id: UUID(),
-            name: "Running",
-            measurements: [
-                .distance(unit: .km, activity: .running, syncWithWatch: true),
-                .time(unit: .timer, midSignal: false)
             ]
         )
         let set1 = ExerciseSet(
@@ -46,6 +36,39 @@ struct MocData {
                 .paired(.weight, 84, .iterations, 14)
             ]
         )
+        return set1
+    }
+    
+    // 1. Bench Press + Running (weight+iterations, distance+time)
+    static var sessionBenchPressAndRunning: Session {
+//        let exercise1 = Exercise(
+//            id: UUID(),
+//            name: "Bench Press",
+//            measurements: [
+//                .weight(unit: .kg, isGravitron: false, doubleInStats: false),
+//                .iterations
+//            ]
+//        )
+        
+        let exercise2 = Exercise(
+            id: UUID(),
+            name: "Running",
+            measurements: [
+                .distance(unit: .km, activity: .running, syncWithWatch: true),
+                .time(unit: .timer, midSignal: false)
+            ]
+        )
+//        let set1 = ExerciseSet(
+//            id: UUID(),
+//            exercise: exercise1,
+//            comment: "hard workout",
+//            results: [
+//                .paired(.weight, 80, .iterations, 10),
+//                .paired(.weight, 82, .iterations, 12),
+//                .paired(.weight, 84, .iterations, 14)
+//            ]
+//        )
+        let set1 = exerciseSet
         let set2 = ExerciseSet(
             id: UUID(),
             exercise: exercise2,

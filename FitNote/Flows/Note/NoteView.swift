@@ -12,7 +12,7 @@ struct NoteView: View {
     @State private var showAddSession = false
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     GreetingHeader(user: viewModel.user)

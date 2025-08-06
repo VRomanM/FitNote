@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct NoteView: View {
     
@@ -14,6 +15,7 @@ struct NoteView: View {
     }
     
     @State private var navigationPath = NavigationPath()
+    @State private var showAlert: Bool = false
     @StateObject private var viewModel = NoteViewModel()
     
     var body: some View {
@@ -23,18 +25,21 @@ struct NoteView: View {
                     GreetingHeader(user: viewModel.user)
                     
                     if let nextSession = viewModel.nextSession {
-                        NextSessionCard(session: nextSession) {
-                            navigationPath.append(NoteRoute.session(session: nextSession))
-                        }
+                        NextSessionsCarousel(
+                            sessions: viewModel.upcomingSessions,
+                            onSelect: { session in
+                                navigationPath.append(NoteRoute.session(session: session))
+                            }
+                        )
                     }
-                    ProgressSection(progress: viewModel.progress)
-                    QuickActionsSection() {
+                    ProgressSection(sessions: viewModel.sessions)
+                    QuickActionsSection(showAlert: $showAlert) {
                         navigationPath.append(NoteRoute.session(session: nil))
                     }
-                    RecentActivitySection(
-                        activities: viewModel.recentActivities,
-                        onSelect: { activity in
-                            if let session = viewModel.sessions.first(where: { $0.name == activity.title && Calendar.current.isDate($0.date, inSameDayAs: activity.date) }) {
+                    RecentSessionsSection(
+                        sessions: viewModel.sessions,
+                        onSelect: { session in
+                            if session == viewModel.sessions.first(where: { $0.status == .planned }) {
                                 navigationPath.append(NoteRoute.session(session: session))
                             }
                         }
@@ -58,6 +63,20 @@ struct NoteView: View {
     }
 }
 
+struct ProfileButton: View {
+    let user: User
+
+    var body: some View {
+        Button {
+            // переход к профилю
+        } label: {
+            Image(systemName: "person.crop.circle")
+                .imageScale(.large)
+                .foregroundStyle(.backgroundAccent1)
+        }
+    }
+}
+
 struct GreetingHeader: View {
     let user: User
 
@@ -69,57 +88,145 @@ struct GreetingHeader: View {
                 Text("Время стать лучше 💪")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+//                    .foregroundColor(.backgroundAccent1)
             }
             Spacer()
             Image(systemName: "person.crop.circle.fill")
                 .resizable()
                 .frame(width: 48, height: 48)
-                .foregroundColor(.accentColor)
+                .foregroundColor(.backgroundAccent1)
         }
+    }
+}
+
+struct NextSessionsCarousel: View {
+    let sessions: [Session]
+    let onSelect: (Session) -> Void
+    
+    @State private var currentIndex = 0
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Ближайшие тренировки")
+                .font(.headline)
+                .padding(.horizontal, 8)
+            
+            TabView(selection: $currentIndex) {
+                ForEach(Array(sessions.enumerated()), id: \.element.id) { index, session in
+                    NextSessionCard(session: session) {
+                        onSelect(session)
+                    }
+                    .tag(index)
+                }
+            }
+            .frame(height: 160)
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+
+            // Кастомные индикаторы
+            HStack(spacing: 8) {
+                Spacer()
+                ForEach(0..<sessions.count, id: \.self) { index in
+                    Circle()
+                        .fill(currentIndex == index ? Color.backgroundAccent1 : Color.backgroundAccent1.opacity(0.3))
+                        .frame(width: 8, height: 8)
+                        .scaleEffect(currentIndex == index ? 1.2 : 1.0)
+                        .animation(.easeInOut(duration: 0.2), value: currentIndex)
+                }
+                Spacer()
+            }
+            .padding(.top, -8)
+        }
+//        .padding(.horizontal, 20)
     }
 }
 
 struct NextSessionCard: View {
     let session: Session
-    let onStart: () -> Void
+    let onSelect: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Ближайшая тренировка")
-                .font(.headline)
-            Text(session.name)
-                .font(.title3).bold()
-            Text(session.date, style: .date)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(session.name)
+                        .font(.title3).bold()
+                        .lineLimit(2)
+                    
+                    Text(session.datePlaned, style: .date)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text("\(session.sets.count) сетов")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Text("\(Int(session.totalWeight)) кг")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
             Button("Начать") {
-                onStart()
+                onSelect()
             }
             .buttonStyle(.borderedProminent)
-            .padding(.top, 4)
+            .tint(.backgroundAccent1)
+            .frame(maxWidth: .infinity)
         }
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))
-        .shadow(radius: 2)
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.secondarySystemBackground))
+                .shadow(radius: 4, x: 0, y: 2)
+                .padding(8)
+        )
     }
 }
 
-import Charts
+//struct NextSessionCard: View {
+//    let session: Session
+//    let onStart: () -> Void
+//
+//    var body: some View {
+//        VStack(alignment: .leading, spacing: 8) {
+//            Text("Ближайшая тренировка")
+//                .font(.headline)
+//            Text(session.name)
+//                .font(.title3).bold()
+//            Text(session.date, style: .date)
+//                .font(.subheadline)
+//                .foregroundColor(.secondary)
+//            Button("Начать") {
+//                onStart()
+//            }
+//            .buttonStyle(.borderedProminent)
+//            .padding(.top, 4)
+//        }
+//        .padding()
+//        .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))
+//        .shadow(radius: 2)
+//    }
+//}
 
 struct ProgressSection: View {
-    let progress: ProgressData
-
+    let sessions: [Session]
+    
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Прогресс")
+            Text("Сжигание калорий")
                 .font(.headline)
-            Chart(progress.entries) { entry in
+            Chart(sessions) { session in
                 LineMark(
-                    x: .value("Дата", entry.date),
-                    y: .value("Вес", entry.value)
+                    x: .value("Дата", session.datePlaned),
+                    y: .value("Калории", session.calories)
                 )
             }
             .frame(height: 120)
+            .foregroundStyle(.backgroundAccent1)
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))
@@ -127,13 +234,23 @@ struct ProgressSection: View {
 }
 
 struct QuickActionsSection: View {
+    @Binding var showAlert: Bool
     var action: () -> Void
     
     var body: some View {
         HStack(spacing: 16) {
             QuickActionButton(title: "Добавить", icon: "plus.circle.fill") { action() }
-            QuickActionButton(title: "Шаблоны", icon: "doc.on.doc.fill")
-            QuickActionButton(title: "Статистика", icon: "chart.bar.fill")
+            QuickActionButton(title: "Шаблоны", icon: "doc.on.doc.fill") {
+                showAlert = true
+            }
+            QuickActionButton(title: "Статистика", icon: "chart.bar.fill") {
+                showAlert = true
+            }
+        }
+        .alert("In new releases", isPresented: $showAlert) {
+            Button("Ok", role: .cancel) {}
+        } message: {
+            Text("The functionality will be available in the upcoming releases")
         }
     }
 }
@@ -148,61 +265,54 @@ struct QuickActionButton: View {
             VStack {
                 Image(systemName: icon)
                     .font(.largeTitle)
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.backgroundAccent1)
+                    .frame(width: 32, height: 32)
                 Text(title)
                     .font(.caption)
+                    .foregroundStyle(.foreground)
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color(.tertiarySystemBackground)))
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
         }
-        .buttonStyle(.plain)
     }
 }
 
-struct RecentActivitySection: View {
-    let activities: [Activity]
-    var onSelect: ((Activity) -> Void)? = nil
+struct RecentSessionsSection: View {
+    let sessions: [Session]
+    var onSelect: ((Session) -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading) {
             Text("Последние тренировки")
                 .font(.headline)
-            ForEach(activities.prefix(3)) { activity in
-                Button(action: { onSelect?(activity) }) {
+            ForEach(sessions.prefix(3)) { session in
+                Button(action: { onSelect?(session) }) {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text(activity.title)
+                            Text(session.name)
                                 .font(.subheadline)
-                            Text(activity.date, style: .time)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.backgroundAccent1)
+                            HStack {
+                                Text(session.datePlaned, style: .date)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text("длилась: \(session.duration?.formattedTime() ?? "--") мин")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                         Spacer()
-                        Text(activity.result)
+                        Text("\(session.calories) ккал")
                             .font(.caption)
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(.secondary)
                     }
                     .padding(.vertical, 4)
                 }
-//                .buttonStyle(.plain)
             }
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))
-    }
-}
-
-struct ProfileButton: View {
-    let user: User
-
-    var body: some View {
-        Button {
-            // переход к профилю
-        } label: {
-            Image(systemName: "person.crop.circle")
-                .imageScale(.large)
-        }
     }
 }
 

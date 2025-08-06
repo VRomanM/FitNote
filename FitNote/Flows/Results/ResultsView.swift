@@ -28,7 +28,7 @@ struct NoteSectionView: View {
     let session: Session
 
     var body: some View {
-        Section(header: Text(session.date, style: .date)) {
+        Section(header: Text(session.datePlaned, style: .date)) {
 //            ForEach(session.sets) { set in
                 SessionRowView(session: session)
 //            }

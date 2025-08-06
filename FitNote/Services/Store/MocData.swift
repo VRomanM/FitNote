@@ -41,15 +41,6 @@ struct MocData {
     
     // 1. Bench Press + Running (weight+iterations, distance+time)
     static var sessionBenchPressAndRunning: Session {
-//        let exercise1 = Exercise(
-//            id: UUID(),
-//            name: "Bench Press",
-//            measurements: [
-//                .weight(unit: .kg, isGravitron: false, doubleInStats: false),
-//                .iterations
-//            ]
-//        )
-        
         let exercise2 = Exercise(
             id: UUID(),
             name: "Running",
@@ -58,16 +49,6 @@ struct MocData {
                 .time(unit: .timer, midSignal: false)
             ]
         )
-//        let set1 = ExerciseSet(
-//            id: UUID(),
-//            exercise: exercise1,
-//            comment: "hard workout",
-//            results: [
-//                .paired(.weight, 80, .iterations, 10),
-//                .paired(.weight, 82, .iterations, 12),
-//                .paired(.weight, 84, .iterations, 14)
-//            ]
-//        )
         let set1 = exerciseSet
         let set2 = ExerciseSet(
             id: UUID(),
@@ -82,9 +63,9 @@ struct MocData {
         return Session(
             id: UUID(),
             name: "Morning Workout",
-            date: Date(),
+            datePlaned: Date(),
             avgHeartRate: 110,
-            duration: TimeInterval(100),
+            duration: nil,
             calories: 300,
             comment: "Жим лёжа, бег",
             sets: [set1, set2]
@@ -96,7 +77,6 @@ struct MocData {
         let cycling = Exercise(
             id: UUID(),
             name: "Cycling",
-//            measurementTypes: [.distance, .time],
             measurements: [
                 .distance(unit: .mile, activity: .cycling, syncWithWatch: false),
                 .time(unit: .stopwatch, midSignal: true)
@@ -105,7 +85,6 @@ struct MocData {
         let walking = Exercise(
             id: UUID(),
             name: "Walking",
-//            measurementTypes: [.distance, .time],
             measurements: [
                 .distance(unit: .km, activity: .walking, syncWithWatch: false),
                 .time(unit: .manual, midSignal: false)
@@ -114,7 +93,6 @@ struct MocData {
         let gravitron = Exercise(
             id: UUID(),
             name: "Gravitron Pull-up",
-//            measurementTypes: [.weight, .iterations],
             measurements: [
                 .weight(unit: .kg, isGravitron: true, doubleInStats: true),
                 .iterations
@@ -156,9 +134,9 @@ struct MocData {
         return Session(
             id: UUID(),
             name: "Outdoor Activities",
-            date: Date(),
+            datePlaned: Date(),
             avgHeartRate: 135,
-            duration: TimeInterval(100),
+            duration: TimeInterval(120),
             calories: 700,
             comment: "Велосипед, прогулка, гравитрон.",
             sets: [set1, set2, set3]
@@ -170,7 +148,6 @@ struct MocData {
         let weightOnly = Exercise(
             id: UUID(),
             name: "Dumbbell Curl",
-//            measurementTypes: [.weight],
             measurements: [
                 .weight(unit: .lb, isGravitron: false, doubleInStats: true)
             ]
@@ -178,7 +155,6 @@ struct MocData {
         let timeOnly = Exercise(
             id: UUID(),
             name: "Plank",
-//            measurementTypes: [.time],
             measurements: [
                 .time(unit: .stopwatch, midSignal: false)
             ]
@@ -186,7 +162,6 @@ struct MocData {
         let distanceOnly = Exercise(
             id: UUID(),
             name: "Rowing",
-//            measurementTypes: [.distance],
             measurements: [
                 .distance(unit: .km, activity: .other, syncWithWatch: false)
             ]
@@ -194,7 +169,6 @@ struct MocData {
         let repsOnly = Exercise(
             id: UUID(),
             name: "Push-ups",
-//            measurementTypes: [.iterations],
             measurements: [
                 .iterations
             ]
@@ -245,9 +219,9 @@ struct MocData {
         return Session(
             id: UUID(),
             name: "Single Type Session",
-            date: Date().addingTimeInterval(-3 * 86400),
+            datePlaned: Date().addingTimeInterval(-3 * 86400),
             avgHeartRate: 110,
-            duration: TimeInterval(100),
+            duration: TimeInterval(1000),
             calories: 900,
             comment: "Каждое упражнение — свой тип измерения.",
             sets: [set1, set2, set3, set4]
@@ -260,7 +234,6 @@ struct MocData {
         let squat = Exercise(
             id: UUID(),
             name: "Squat",
-//            measurementTypes: [.weight, .iterations],
             measurements: [
                 .weight(unit: .kg, isGravitron: false, doubleInStats: false),
                 .iterations
@@ -284,7 +257,6 @@ struct MocData {
         let pullup = Exercise(
             id: UUID(),
             name: "Pull-up",
-//            measurementTypes: [.iterations],
             measurements: [
                 .iterations
             ]
@@ -292,7 +264,6 @@ struct MocData {
         let pushup = Exercise(
             id: UUID(),
             name: "Push-up",
-//            measurementTypes: [.iterations],
             measurements: [
                 .iterations
             ]
@@ -320,9 +291,9 @@ struct MocData {
         return Session(
             id: UUID(),
             name: "Single Type Session",
-            date: Date().addingTimeInterval(-3 * 86400),
+            datePlaned: Date().addingTimeInterval(-3 * 86400),
             avgHeartRate: 110,
-            duration: TimeInterval(100),
+            duration: TimeInterval(1000),
             calories: 900,
             comment: "Сессия с обычным упражнением и суперсетом.",
             sets: [set1, set2, set3]

@@ -11,7 +11,9 @@ struct AppMainTabView: View {
     var body: some View {
         TabView {
             NoteView()
-                .tabItem { Label("Дневник", systemImage: "book.pages.fill") }
+                .tabItem {
+                    Label("Дневник", systemImage: "book.pages.fill")
+                }
             ExercisesView()
                 .tabItem { Label("Упражнения", systemImage: "dumbbell.fill") }
             ResultsView()
@@ -19,6 +21,7 @@ struct AppMainTabView: View {
             SettingsView()
                 .tabItem { Label("Настройки", systemImage: "gearshape.fill") }
         }
+        .tint(.backgroundAccent1)
     }
 }
 

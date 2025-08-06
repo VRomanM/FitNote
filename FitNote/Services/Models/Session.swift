@@ -8,13 +8,46 @@
 import Foundation
 
 struct Session: Identifiable, Hashable {
+    enum Status: String {
+        case planned
+        case started
+        case finished
+    }
+    
     static func == (lhs: Session, rhs: Session) -> Bool {
         lhs.id == rhs.id
     }
     
     let id: UUID
     var name: String
-    var date: Date
+    var status: Status = .planned {
+        didSet {
+            switch status {
+            case .planned:
+                dateStart = nil
+                dateFinish = nil
+            case .started:
+                dateStart = Date()
+            case .finished:
+                dateFinish = Date()
+            }
+        }
+    }
+    var datePlaned: Date
+    var dateStart: Date? {
+        didSet {
+            if let dateStart = dateStart, let dateFinish = dateFinish {
+                duration = dateFinish.timeIntervalSince(dateStart)
+            }
+        }
+    }
+    var dateFinish: Date? {
+        didSet {
+            if let dateStart = dateStart, let dateFinish = dateFinish {
+                duration = dateFinish.timeIntervalSince(dateStart)
+            }
+        }
+    }
     
     var totalWeight: Double {
         sets.reduce(into: 0) { sum, set in

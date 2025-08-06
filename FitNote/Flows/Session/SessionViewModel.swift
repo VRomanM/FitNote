@@ -10,7 +10,7 @@ import SwiftUI
 @MainActor
 class SessionViewModel: ObservableObject {
     @Published var name: String
-    @Published var date: Date
+    @Published var datePlaned: Date
     @Published var avgHeartRate: Int?
     @Published var duration: TimeInterval?
     @Published var calories: Int
@@ -31,7 +31,7 @@ class SessionViewModel: ObservableObject {
     init(session: Session? = nil) {
         if let session = session {
             self.name = session.name
-            self.date = session.date
+            self.datePlaned = session.datePlaned
             self.avgHeartRate = session.avgHeartRate
             self.duration = session.duration
             self.calories = session.calories
@@ -39,7 +39,7 @@ class SessionViewModel: ObservableObject {
             self.sets = session.sets.map { ExerciseSetViewModel(set: $0) }
         } else {
             self.name = ""
-            self.date = Date()
+            self.datePlaned = Date()
             self.avgHeartRate = nil
             self.duration = nil
             self.calories = 0
@@ -70,7 +70,7 @@ class SessionViewModel: ObservableObject {
         Session(
             id: UUID(),
             name: name,
-            date: date,
+            datePlaned: datePlaned,
             avgHeartRate: avgHeartRate,
             duration: duration,
             calories: calories,

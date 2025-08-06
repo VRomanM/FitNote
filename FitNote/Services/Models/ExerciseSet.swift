@@ -7,13 +7,14 @@
 
 import Foundation
 
-struct ExerciseSet: Identifiable {
+struct ExerciseSet: Identifiable, Hashable {
+    static func == (lhs: ExerciseSet, rhs: ExerciseSet) -> Bool {
+        lhs.id == rhs .id
+    }
+    
     let id: UUID
     let exercise: Exercise
     var comment: String?
-//    var measurements: [MeasurementType: Measurement] { exercise.measurements }
-//    var measurementsValues: [MeasurementType: Double] // вес, время, дистанция, повторения
-//    var measurementsValues: [(MeasurementType, Double)]
     var results: [Result]
     var superset: Superset?
     

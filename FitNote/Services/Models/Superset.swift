@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Superset: Identifiable {
+struct Superset: Identifiable, Hashable {
     let id: UUID
     var name: String
     var recoveryTime: TimeInterval?

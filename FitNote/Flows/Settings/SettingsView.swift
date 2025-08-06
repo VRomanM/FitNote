@@ -91,7 +91,7 @@ private struct SessionRow: View {
             VStack(alignment: .leading) {
                 Text(session.comment ?? "Без комментария")
                     .font(.body)
-                Text(session.date, style: .date)
+                Text(session.datePlaned, style: .date)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

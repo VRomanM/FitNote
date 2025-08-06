@@ -5,14 +5,13 @@
 //  Created by Роман Вертячих on 27.07.2025.
 //
 
-import SwiftUI
+import Combine
 
 @MainActor
 class ExercisesViewModel: ObservableObject {
     
     //MARK: - Published Properties
-    @Published var navigationPath = NavigationPath()
-    
+
     @Published var exercises: [Exercise] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?

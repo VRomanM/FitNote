@@ -1,5 +1,5 @@
 //
-//  EditExerciseView.swift
+//  ExerciseView.swift
 //  FitNote
 //
 //  Created by Роман Вертячих on 24.07.2025.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct EditExerciseView: View {
-    @ObservedObject var viewModel: EditExerciseViewModel
+struct ExerciseView: View {
+    @ObservedObject var viewModel: ExerciseViewModel
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -91,5 +91,5 @@ struct EditExerciseView: View {
 }
 
 #Preview {
-    EditExerciseView(viewModel: EditExerciseViewModel())
+    ExerciseView(viewModel: ExerciseViewModel())
 }

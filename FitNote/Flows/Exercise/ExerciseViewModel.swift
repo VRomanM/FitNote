@@ -1,5 +1,5 @@
 //
-//  EditExerciseViewModel.swift
+//  ExerciseViewModel.swift
 //  FitNote
 //
 //  Created by Роман Вертячих on 24.07.2025.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-final class EditExerciseViewModel: ObservableObject {
+final class ExerciseViewModel: ObservableObject {
     
     //MARK: - Published Properties
     

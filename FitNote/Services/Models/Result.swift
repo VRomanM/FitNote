@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Result {
+enum Result: Hashable {
     case single(MeasurementType, Double)
     case paired(MeasurementType, Double, MeasurementType, Double)
 }

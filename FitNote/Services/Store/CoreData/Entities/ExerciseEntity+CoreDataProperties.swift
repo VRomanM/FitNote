@@ -19,6 +19,7 @@ extension ExerciseEntity {
     @NSManaged public var id: UUID
     @NSManaged public var name: String
     @NSManaged public var measurementEntity: NSSet
+    @NSManaged public var exerciseSetEntity: NSSet
     
     var measurements: [Measurement] {
         get {

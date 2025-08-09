@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct ExercisesView: View {
     
     private enum ExerciseRoute: Hashable {
@@ -33,7 +34,7 @@ struct ExercisesView: View {
                             .multilineTextAlignment(.center)
                         Button("Repeat") {
                             Task {
-                                await viewModel.refreshExercises()
+                                await viewModel.loadExercises()
                             }
                         }
                         .buttonStyle(.bordered)
@@ -61,17 +62,30 @@ struct ExercisesView: View {
                                 }
                             }
                             .padding(.vertical, 4)
-                            
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    Task {
+                                        await viewModel.deleteExercise(exercise: exercise)
+                                    }
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                         }
                     }
                     .navigationDestination(for: ExerciseRoute.self) { route in
                         switch route {
                         case .detail(let exercise):
-                            ExerciseView(viewModel: ExerciseViewModel(exercise: exercise))
+                            ExerciseView(viewModel: ExerciseViewModel(exercise: exercise),
+                                         onDismiss: {
+                                Task {
+                                    await viewModel.loadExercises()
+                                }
+                            })
                         }
                     }
                     .refreshable {
-                        await viewModel.refreshExercises()
+                        await viewModel.loadExercises()
                     }
                 }
             }

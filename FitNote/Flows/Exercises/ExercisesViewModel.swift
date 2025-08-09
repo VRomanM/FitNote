@@ -7,8 +7,11 @@
 
 import Combine
 
-@MainActor
-class ExercisesViewModel: ObservableObject {
+final class ExercisesViewModel: ObservableObject {
+    
+    //MARK: - Private properties
+    
+    private let coreDataManager = CoreDataManager.shared
     
     //MARK: - Published Properties
 
@@ -16,33 +19,52 @@ class ExercisesViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
+    //MARK: - Constructions
+    
     init() {
         Task {
             await loadExercises()
         }
     }
     
-    func loadExercises() async {
-        isLoading = true
-        errorMessage = nil
-        
-        do {
-            // Имитируем асинхронную загрузку
-            try await Task.sleep(for: .seconds(0.3))
-            
-            let exercises: [Exercise] = MocData.sessions.flatMap(\.sets).map(\.exercise)
-            self.exercises = Array(Set(exercises)).sorted { $0.name < $1.name }
-//        } catch is CancellationError {
-//            // Просто игнорируем отмену задачи, не показываем ошибку
-        } catch {
-            errorMessage = "Error loading exercises: %@".localized(with: error.localizedDescription)
+    //MARK: - Private function
+
+    private func retrieveContactsFromCoreData() async {
+        await MainActor.run {
+            isLoading = true
         }
         
-        isLoading = false
+        let exercisesFromCoreData: [Exercise] = await {
+            guard let exercisesEntities = try? await coreDataManager.retrieveExercises() else { return [] }
+            let mappedExercises: [Exercise] = exercisesEntities.compactMap { exercise in
+                return Exercise(id: exercise.id, name: exercise.name, measurements: exercise.measurements)
+            }
+            return mappedExercises
+        }()
+        
+        await MainActor.run {
+            self.exercises = exercisesFromCoreData
+            self.isLoading = false
+        }
     }
     
-    func refreshExercises() async {
+    func loadExercises() async {
         guard !isLoading else { return }
-        await loadExercises()
+        await retrieveContactsFromCoreData()
+    }
+    
+    func deleteExercise(exercise: Exercise) async {
+        guard !isLoading else { return }
+        
+        await MainActor.run {
+            self.isLoading = true
+        }
+        
+        do {
+            try await coreDataManager.deleteExercise(exercise)
+            await loadExercises()
+        } catch {
+            print("Error deleting exercise: \(error.localizedDescription)")
+        }
     }
 }

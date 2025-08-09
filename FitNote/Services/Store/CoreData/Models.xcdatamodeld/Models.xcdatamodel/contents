@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24G84" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="ExerciseEntity" representedClassName="ExerciseEntity" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="measurementEntity" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MeasurementEntity" inverseName="exreciseEntity" inverseEntity="MeasurementEntity"/>
+    </entity>
+    <entity name="MeasurementEntity" representedClassName="MeasurementEntity" syncable="YES">
+        <attribute name="activity" optional="YES" attributeType="String"/>
+        <attribute name="distanceUnit" optional="YES" attributeType="String"/>
+        <attribute name="doubleInStats" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isGravitron" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="midSignal" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="syncWithWatch" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="timeUnit" optional="YES" attributeType="String"/>
+        <attribute name="type" attributeType="String"/>
+        <attribute name="weightUnit" optional="YES" attributeType="String"/>
+        <relationship name="exreciseEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExerciseEntity" inverseName="measurementEntity" inverseEntity="ExerciseEntity"/>
+    </entity>
+</model>

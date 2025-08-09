@@ -7,10 +7,12 @@
 
 import SwiftUI
 
+@MainActor
 struct ExerciseView: View {
     @ObservedObject var viewModel: ExerciseViewModel
     @Environment(\.dismiss) private var dismiss
-
+    var onDismiss: (() -> Void)?
+    
     var body: some View {
         Form {
             Section(header: Text("General properties")) {
@@ -76,8 +78,13 @@ struct ExerciseView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
-                    viewModel.saveExercise()
-                    dismiss()
+                    Task {
+                        await viewModel.saveExercise()
+                        await MainActor.run {
+                            onDismiss?()
+                            dismiss()
+                        }
+                    }
                 }
                 .disabled(!viewModel.isValid)
             }

@@ -9,6 +9,10 @@ import SwiftUI
 
 final class ExerciseViewModel: ObservableObject {
     
+    //MARK: - Private properties
+    
+    private let coreDataManager = CoreDataManager.shared
+    
     //MARK: - Published Properties
     
     @Published var exercise: Exercise
@@ -102,8 +106,18 @@ final class ExerciseViewModel: ObservableObject {
     
     //MARK: - Function
     
-    func saveExercise() {
+    func saveExercise() async {
+        await MainActor.run {
+            exercise.measurements = measurements
+        }
         
+        do {
+            try await coreDataManager.saveExercise(exercise: exercise)
+        } catch {
+            await MainActor.run {
+                print("Error saving exercise: \(error)")
+            }
+        }
     }
     
     func toggleMeasurement(_ type: MeasurementType) {

@@ -220,7 +220,7 @@ struct ExerciseSetRow: View {
     let setNumber: Int
     let result: Result
     let restTime: TimeInterval?
-    
+
     var body: some View {
         HStack {
             Text("\(setNumber)")

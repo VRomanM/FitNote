@@ -59,4 +59,24 @@ struct Session: Identifiable, Hashable {
     let calories: Int
     var comment: String
     var sets: [ExerciseSet]
+    
+    init(id: UUID, name: String, datePlaned: Date, avgHeartRate: Int?, duration: TimeInterval?, calories: Int, comment: String, sets: [ExerciseSet]) {
+        self.id = id
+        self.name = name
+        self.datePlaned = datePlaned
+        self.avgHeartRate = avgHeartRate
+        self.duration = duration
+        self.calories = calories
+        self.comment = comment
+        self.sets = sets
+    }
+    
+    init() {
+        self.id = UUID()
+        self.name = ""
+        self.datePlaned = Date()
+        self.calories = 0
+        self.comment = ""
+        self.sets = [ExerciseSet]()
+    }
 }

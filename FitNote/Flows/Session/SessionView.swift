@@ -24,7 +24,7 @@ struct SessionView: View {
                     
                     Spacer()
                     
-                    Text("1 неделя 3 день")
+                    TextField("Enter session name", text: $viewModel.session.name)
                         .font(.title2.bold())
                         .foregroundColor(.white)
                     
@@ -39,10 +39,10 @@ struct SessionView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 10)
                 
-                Text("6 ИЮНЯ, 19:38")
-                    .font(.caption)
-                    .foregroundColor(.white.opacity(0.8))
-                    .padding(.bottom, 16)
+                DatePicker(selection: $viewModel.session.datePlaned) {}
+                    .tint(.white)
+                    .labelsHidden()
+                    .padding()
             }
             .background(
                 LinearGradient(
@@ -57,13 +57,13 @@ struct SessionView: View {
             
             // Метрики сессии
             HStack(spacing: 0) {
-                MetricBlock(title: "ВРЕМЯ", value: "44 мин")
+                MetricBlock(title: "TIME", value: "\(viewModel.session.duration?.formattedAsMinutes() ?? "") min")//"44 мин")
                 Divider().frame(height: 40)
-                MetricBlock(title: "ОБЪЕМ", value: "1 440 кг")
+                MetricBlock(title: "TONNAGE", value: "\(viewModel.session.totalWeight) kg")//"1 440 кг")
                 Divider().frame(height: 40)
-                MetricBlock(title: "СР.❤️", value: "123")
+                MetricBlock(title: "AVG.❤️", value: "\(viewModel.session.avgHeartRate ?? 0)")
                 Divider().frame(height: 40)
-                MetricBlock(title: "КАЛОРИИ", value: "320")
+                MetricBlock(title: "CALLORIES", value: "\(viewModel.session.calories)")
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -93,7 +93,9 @@ struct SessionView: View {
                 .padding(.top, 16)
             }
             .sheet(isPresented: $viewModel.isPresentingExercisePicker) {
-                // ExercisePickerView
+                ExercisesView(forSelection: true, onSelection: { exercise in 
+                    viewModel.addSet(for: exercise)
+                })
             }
             .sheet(isPresented: $viewModel.isPresentingExerciseSetEditor) {
                 if let index = viewModel.selectedSetIndex {

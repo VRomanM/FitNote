@@ -9,6 +9,7 @@ import SwiftUI
 
 @MainActor
 struct ExercisesView: View {
+    @Environment(\.dismiss) var dismiss
     
     private enum ExerciseRoute: Hashable {
         case detail(exercise: Exercise?)
@@ -16,6 +17,8 @@ struct ExercisesView: View {
     
     @State private var navigationPath = NavigationPath()
     @StateObject private var viewModel = ExercisesViewModel()
+    let forSelection: Bool
+    var onSelection: ((Exercise) -> Void)?
     
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -45,7 +48,9 @@ struct ExercisesView: View {
                         // Список упражнений с возможностью редактирования
                         ForEach(viewModel.exercises) { exercise in
                             Button(action: {
-                                navigationPath.append(ExerciseRoute.detail(exercise: exercise))
+                                handleExerciseSelection(exercise)
+//                                onSelection(exercise)
+//                                navigationPath.append(ExerciseRoute.detail(exercise: exercise))
                             }) {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(exercise.name)
@@ -94,6 +99,20 @@ struct ExercisesView: View {
                 navigationPath.append(ExerciseRoute.detail(exercise: nil))
             }
         }
+    }
+    
+    private func handleExerciseSelection(_ exercise: Exercise) {
+        if forSelection {
+            onSelection?(exercise)
+            dismiss()
+        } else {
+            navigationPath.append(ExerciseRoute.detail(exercise: exercise))
+        }
+    }
+    
+    init(forSelection: Bool = false, onSelection: ((Exercise) -> Void)? = nil) {
+        self.forSelection = forSelection
+        self.onSelection = onSelection
     }
 }
 

@@ -17,15 +17,33 @@ struct MocData {
         ]
     }
 
+    static var exercises: [Exercise] {
+        [
+            exercise1,
+            exercise2
+        ]
+    }
+    
+    static let exercise1 = Exercise(
+        id: UUID(),
+        name: "Bench Press",
+        measurements: [
+            .weight(unit: .kg, isGravitron: false, doubleInStats: false),
+            .iterations
+        ]
+    )
+    
+    static let exercise2 = Exercise(
+        id: UUID(),
+        name: "Running",
+        measurements: [
+            .distance(unit: .km, activity: .running, syncWithWatch: true),
+            .time(unit: .timer, midSignal: false)
+        ]
+    )
+    
     static var exerciseSet: ExerciseSet {
-        let exercise1 = Exercise(
-            id: UUID(),
-            name: "Bench Press",
-            measurements: [
-                .weight(unit: .kg, isGravitron: false, doubleInStats: false),
-                .iterations
-            ]
-        )
+        
         let set1 = ExerciseSet(
             id: UUID(),
             exercise: exercise1,
@@ -41,14 +59,6 @@ struct MocData {
     
     // 1. Bench Press + Running (weight+iterations, distance+time)
     static var sessionBenchPressAndRunning: Session {
-        let exercise2 = Exercise(
-            id: UUID(),
-            name: "Running",
-            measurements: [
-                .distance(unit: .km, activity: .running, syncWithWatch: true),
-                .time(unit: .timer, midSignal: false)
-            ]
-        )
         let set1 = exerciseSet
         let set2 = ExerciseSet(
             id: UUID(),
